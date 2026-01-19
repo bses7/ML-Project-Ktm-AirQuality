@@ -6,10 +6,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # This ensures your history CSVs survive even if you stop the container
       - ./backend/app/raw_data:/app/app/raw_data
     environment:
-      - VC_API_KEY=JVCG7L7W6F53QZUR2QX6P6XJ8 # You can also use a .env file
+      - VC_API_KEY=JVCG7L7W6F53QZUR2QX6P6XJ8 
+      - OPENAQ_API_KEY = "d44de1af94a65b225622ebda9613901f62f5c7235731daeba81a8a924690f8c7"
     restart: always
 
   frontend:

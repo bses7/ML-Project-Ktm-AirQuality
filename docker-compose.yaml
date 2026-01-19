@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # This ensures your history CSVs survive even if you stop the container
+      - ./backend/app/raw_data:/app/app/raw_data
+    environment:
+      - VC_API_KEY=JVCG7L7W6F53QZUR2QX6P6XJ8 # You can also use a .env file
+    restart: always
+
+  frontend:
+    build: ./swaasthaktm
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: always

@@ -15,7 +15,7 @@ Kathmandu is one of the most polluted cities in South Asia. Most existing system
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 - **24-Hour Forecast:** Predicts if PM2.5 will reach hazardous levels (>150 µg/m³) tomorrow.
 - **Closed-Loop Automation:** An hourly background scheduler fetches, cleans, and merges data from OpenAQ and Visual Crossing APIs.

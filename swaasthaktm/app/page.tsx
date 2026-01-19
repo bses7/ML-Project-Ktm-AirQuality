@@ -419,7 +419,7 @@ export default function Dashboard() {
                   <Heart className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
                   <div>
                     <h4 className="font-semibold text-green-900 text-sm mb-1">
-                      ✓ Air Quality Good
+                      Air Quality Good
                     </h4>
                     <p className="text-xs text-green-800">
                       Current conditions are favorable for outdoor activities.

@@ -2,8 +2,7 @@ import joblib
 import os
 from datetime import datetime
 
-# Path to artifacts
-MODEL_PATH = "app/ml_models/artifacts/ensemble_model.pkl"
+MODEL_PATH = "app/ml_models/artifacts/voting_model.pkl"
 SCALER_PATH = "app/ml_models/artifacts/scaler.pkl"
 FEATURES_PATH = "app/ml_models/artifacts/features.pkl"
 

@@ -2,13 +2,16 @@ import httpx
 import pandas as pd
 import os
 from datetime import timedelta, datetime
+from dotenv import load_dotenv
 from app.services.data_cleaner import clean_and_merge_logic
+
+load_dotenv()
 
 # --- CONFIGURATION ---
 OPENAQ_LOCATION_ID = "3459"
 OPENAQ_SENSOR_ID = 7710
-OPENAQ_API_KEY = "d44de1af94a65b225622ebda9613901f62f5c7235731daeba81a8a924690f8c7"
-VC_API_KEY = "SE5P48R4L5GPVYY2P7YGC58W5"
+OPENAQ_API_KEY = os.getenv("OPENAQ_API_KEY")
+VC_API_KEY = os.getenv("VC_API_KEY")
 DATA_FOLDER = os.path.join("app", "raw_data")
 
 async def fetch_latest_raw_data():

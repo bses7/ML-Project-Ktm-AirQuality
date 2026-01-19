@@ -91,6 +91,8 @@ cd backend
 # Install dependencies
 pip install -r requirements.txt
 
+# Create .env using the sample provided
+
 # Run the Seeding Script (Creates initial history)
 python -m app.seed_data
 

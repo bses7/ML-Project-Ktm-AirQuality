@@ -32,3 +32,7 @@ tzlocal==5.3.1
 urllib3==2.6.3
 uvicorn==0.24.0
 xgboost==3.1.0
+optuna==4.7.0
+matplotlib==3.10.8
+seaborn==0.13.2
+lime==0.2.0.1

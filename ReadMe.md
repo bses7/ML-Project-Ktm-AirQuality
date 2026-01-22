@@ -70,12 +70,16 @@ Swaastha-Ktm/
 │   │   ├── services/                    # Fetcher, Cleaner, Engineer
 │   │   └── main.py                      # FastAPI entry point
 │   └── seed_data.py                     # Initial 48h data fetch script
-├── frontend/swaasthaktm                 # Next.js Dashboard
+├── swaasthaktm                 # Next.js Dashboard
 ├── Notebook # All the Notebooks used for Data Build, EDA and Training
 └── aqData/
 └── weatherData/
+└── models/ # Latest Models and Evaluations
+└── src/    # Source Code from Project Build to Deploy
 └── docker-compose.yaml
+└── main.py   # Main Entry Point for Pipeline
 └── ReadMe.md
+└── requirements.txt # Project Requirements
 ```
 
 ---
@@ -85,6 +89,7 @@ Swaastha-Ktm/
 The project uses a structured pipeline manager (`main.py`) to handle the lifecycle of the model from raw data to Docker deployment.
 
 ### 1. Initial Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/Swaastha-Ktm.git
@@ -95,36 +100,44 @@ pip install -r requirements.txt
 ```
 
 ### 2. Run the ML Pipeline
+
 You can run the entire flow (Build → Clean → Preprocess → Train → Evaluate) with a single command:
+
 ```bash
 python main.py
 ```
 
 ### 3. Granular Pipeline Control
+
 The project supports stage-specific execution for debugging or fine-tuning:
 
-| Command | Action |
-| :--- | :--- |
-| `python main.py --stage build` | Merges raw CSVs from `aqData` and `weatherData`. |
-| `python main.py --stage clean` | Handles outliers and interpolates missing sensor data. |
-| `python main.py --stage preprocess` | Generates temporal features and 24h lag variables. |
-| `python main.py --stage train` | Trains models using parameters in `params/best_params.json`. |
+| Command                                    | Action                                                       |
+| :----------------------------------------- | :----------------------------------------------------------- |
+| `python main.py --stage build`             | Merges raw CSVs from `aqData` and `weatherData`.             |
+| `python main.py --stage clean`             | Handles outliers and interpolates missing sensor data.       |
+| `python main.py --stage preprocess`        | Generates temporal features and 24h lag variables.           |
+| `python main.py --stage train`             | Trains models using parameters in `params/best_params.json`. |
 | `python main.py --stage train --mode tune` | Re-runs **Optuna** optimization to find new best parameters. |
-| `python main.py --stage evaluate` | Generates PR curves and CMs in `models/evaluations/`. |
+| `python main.py --stage evaluate`          | Generates PR curves and CMs in `models/evaluations/`.        |
 
 ### 4. Zero-Touch Deployment
+
 When you are satisfied with the evaluation metrics, deploy the entire stack (FastAPI + Next.js) using:
+
 ```bash
 python main.py --stage deploy
 ```
+
 **This command automatically:**
+
 1. Syncs the latest `.pkl` models to `backend/app/ml_models/artifacts/`.
 2. Syncs the `scaler.pkl` and `features.pkl` to ensure feature parity.
 3. Triggers `docker-compose up --build -d` to launch the containers.
 
 ---
 
-## 📂 Artifact Management
+## Artifact Management
+
 - **Best Parameters:** Stored in `params/best_params.json` for reproducibility.
 - **Model Artifacts:** Saved in `models/` (and synced to the app during deploy).
 - **Visualizations:** Auto-generated during the `evaluate` stage in `models/evaluations/`.

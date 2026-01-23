@@ -75,7 +75,14 @@ Swaastha-Ktm/
 └── aqData/
 └── weatherData/
 └── models/ # Latest Models and Evaluations
-└── src/    # Source Code from Project Build to Deploy
+└── src/   # Source Code from Project Build to Deploy
+│   ├── config/
+│   ├── databuilder/
+│   ├── datacleaner/
+│   ├── preprocessing/
+│   ├── training/
+│   ├── evaluation/
+│   ├── utils/
 └── docker-compose.yaml
 └── main.py   # Main Entry Point for Pipeline
 └── ReadMe.md

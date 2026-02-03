@@ -261,7 +261,8 @@ export default function Dashboard() {
             Medical Air Quality Dashboard for Kathmandu
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            Last updated: {new Date(data.timestamp).toLocaleTimeString()}
+            Last updated: {new Date(data.timestamp).toLocaleDateString()}{" "}
+            {new Date(data.timestamp).toLocaleTimeString()}
           </p>
         </header>
 

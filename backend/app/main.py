@@ -15,7 +15,10 @@ from app.schemas.predictions import (
     AQIDistributionPoint
 )
 from typing import List
+from app.services.email_service import send_aqi_alert
+import os
 
+last_alert_sent = {"timestamp": None, "aqi": 0}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,12 +28,17 @@ async def lifespan(app: FastAPI):
     
     def hourly_task():
         asyncio.run(update_database_and_predict())
+       
+    def alert_check_task():
+        asyncio.run(check_and_send_alert())
     
     scheduler.add_job(hourly_task, 'cron', minute=0)
+    scheduler.add_job(alert_check_task, 'cron', hour=18, minute=0)
     scheduler.start()
     
     try:
         await update_database_and_predict()
+        await check_and_send_alert()
     except Exception as e:
         print(f"Initial data fetch failed: {e}")
     
@@ -38,6 +46,34 @@ async def lifespan(app: FastAPI):
     
     print("Shutting down scheduler...")
     scheduler.shutdown()
+
+async def check_and_send_alert():
+    """Check AQI and send email if threshold exceeded"""
+    try:
+        history_df = pd.read_csv("app/raw_data/current_history.csv")
+        latest_raw = history_df.iloc[-1]
+        aqi_val = calculate_pm25_aqi(latest_raw['pm25'])
+        
+        if aqi_val > 120:
+            current_time = pd.Timestamp.now()
+            
+            if (last_alert_sent["timestamp"] is None or 
+                (current_time - last_alert_sent["timestamp"]).total_seconds() > 10800):  # 3 hours
+                
+                recipient = os.getenv("ALERT_EMAIL", "your-email@example.com")
+                
+                success = await send_aqi_alert(
+                    aqi_value=aqi_val,
+                    pm25=latest_raw['pm25'],
+                    recipient_email=recipient
+                )
+                
+                if success:
+                    last_alert_sent["timestamp"] = current_time
+                    last_alert_sent["aqi"] = aqi_val
+                    
+    except Exception as e:
+        print(f"Error checking AQI for alerts: {e}")
 
 app = FastAPI(
     title="Kathmandu Air Guard API",

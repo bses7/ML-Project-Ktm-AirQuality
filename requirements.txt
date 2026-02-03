@@ -36,3 +36,4 @@ optuna==4.7.0
 matplotlib==3.10.8
 seaborn==0.13.2
 lime==0.2.0.1
+aiosmtplib==5.1.0

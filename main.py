@@ -117,12 +117,10 @@ def run_train_stage(mode='default'):
 def run_evaluate_stage():
     logger.info(">>> STARTING STAGE: EVALUATE")
     
-    # 1. Load Data
     df = pd.read_csv(Config.ML_READY_DATA)
     trainer = ModelTrainer(df)
     X_train, X_test, y_train, y_test = trainer.prepare_data()
     
-    # 2. Identify and Load Trained Models
     model_files = [f for f in os.listdir(Config.MODEL_DIR) if f.endswith('.pkl') and f not in ['scaler.pkl', 'features.pkl']]
     
     if not model_files:
@@ -132,7 +130,6 @@ def run_evaluate_stage():
     results_probs = {}
     evaluator = ModelEvaluator()
     
-    # 3. Generate Predictions and Individual Plots
     for model_file in model_files:
         name = model_file.replace('.pkl', '')
         model = joblib.load(os.path.join(Config.MODEL_DIR, model_file))
@@ -140,19 +137,16 @@ def run_evaluate_stage():
         probs = model.predict_proba(X_test)[:, 1]
         results_probs[name] = probs
         
-        # Individual Model Plots
         evaluator.plot_confusion_matrix(y_test, probs, name)
         evaluator.plot_threshold_tradeoff(y_test, probs, name)
         
         if name in ["random_forest", "XGBoost"]:
             evaluator.plot_feature_importance(model, trainer.feature_names, name)
 
-    # 4. Global Comparison Plots
     evaluator.plot_pr_curves(y_test, results_probs)
     evaluator.plot_probability_distribution(y_test, results_probs)
     evaluator.plot_calibration(y_test, results_probs)
 
-    # 5. LIME Explanation (using Voting Ensemble)
     if "Voting Ensemble" in results_probs:
         voting_model_path = os.path.join(Config.MODEL_DIR, "voting_ensemble.pkl")
         if os.path.exists(voting_model_path):
@@ -174,20 +168,18 @@ def main():
 
     args = parser.parse_args()
 
-    # Dictionary for individual stages
     stage_map = {
         'build': run_build_stage,
         'clean': run_clean_stage,
         'preprocess': run_preprocess_stage,
         'train': lambda: run_train_stage(args.mode),
         'evaluate': run_evaluate_stage,
-        'deploy': deploy_pipeline  # Only run when specifically called
+        'deploy': deploy_pipeline  
     }
 
     try:
         if args.stage == 'all':
             logger.info("Running FULL Pipeline (Build to Evaluate)...")
-            # Explicitly define the sequence for 'all'
             run_build_stage()
             run_clean_stage()
             run_preprocess_stage()
